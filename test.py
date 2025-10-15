@@ -5,4 +5,4 @@ mlflow.set_experiment("NotifyTest")
 
 with mlflow.start_run():
     mlflow.log_param("alpha", 0.5)
-    mlflow.log_metric("accuracy", 0.9)
+    mlflow.log_metric("accuracy", 0.8)
