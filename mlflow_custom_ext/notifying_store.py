@@ -44,3 +44,5 @@ class NotifyingStore(SqlAlchemyStore):
         self.redis_client.publish('mlflow_events', json.dumps(event))
         print("📢 Published MODEL_VERSION_CREATED event:", event)
         return mv
+    
+#ryank
