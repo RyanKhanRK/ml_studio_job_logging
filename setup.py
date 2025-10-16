@@ -7,6 +7,6 @@ setup(
     entry_points={
         "mlflow.tracking_store": [
             "notifying-db=mlflow_custom_ext.notifying_store:NotifyingStore"
-        ]
+        ],
     },
 )

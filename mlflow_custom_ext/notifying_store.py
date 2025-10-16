@@ -15,11 +15,20 @@ class NotifyingStore(SqlAlchemyStore):
         self.redis_client = redis.Redis(host='localhost', port=6379, db=0)
         print("✅ Connected to Redis server on localhost:6379")
 
-    def create_run(self, experiment_id, user_id, start_time, tags):
-        run = super().create_run(experiment_id, user_id, start_time, tags)
-        event = {'event': 'RUN_CREATED', 'run_id': run.info.run_id}
+    def create_run(self, experiment_id, user_id, start_time, tags, **kwargs):
+        event = {'event': 'RUN_CREATED'}
         self.redis_client.publish('mlflow_events', json.dumps(event))
-        print("📢 Published RUN_CREATED event:", event)
+        print("📢 Published RUN_CREATED event 1:", event)
+        run = None
+        try:
+            run = super().create_run(experiment_id, user_id, start_time, tags, **kwargs)
+            status = "Successful" 
+            event['run_id'] = run.info.run_id
+        except:    
+            status = "Unsuccessful"
+        event['status'] = status
+        self.redis_client.publish('mlflow_events', json.dumps(event))
+        print("📢 Published RUN_CREATED event 2:", event)
         return run
 
     def create_model_version(
