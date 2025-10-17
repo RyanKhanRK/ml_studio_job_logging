@@ -22,4 +22,4 @@ model_source = f"runs:/{run_id}/model"
 # This triggers create_model_version in your NotifyingStore
 mv = client.create_model_version(name=model_name, source=model_source, run_id=run_id)
 
-print(f"✅ Created model version: {mv.name} (v{mv.version})")
+print(f"Created model version: {mv.name} (v{mv.version})")
