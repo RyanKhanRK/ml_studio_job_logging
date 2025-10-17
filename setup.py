@@ -8,5 +8,8 @@ setup(
         "mlflow.tracking_store": [
             "notifying-db=mlflow_custom_ext.notifying_store:NotifyingStore"
         ],
+        "mlflow.model_registry_store": [  # <--- add this
+            "notifying-db=mlflow_custom_ext.notifying_store:NotifyingStore"
+        ],
     },
 )

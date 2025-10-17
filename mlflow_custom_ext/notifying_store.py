@@ -31,18 +31,33 @@ class NotifyingStore(SqlAlchemyStore):
         print("Published RUN_CREATED event 2:", event)
         return run
 
-    def create_model_version(
-        self, name, source, run_id=None, tags=None, run_link=None, description=None, local_model_path=None
-    ):
-        mv = super().create_model_version(name, source, run_id, tags, run_link, description, local_model_path)
+def create_model_version(self, name, source, run_id=None, tags=None, **kwargs):
+    mv = None
+    try:
+        # Call the original SqlAlchemyStore method
+        mv = super().create_model_version(
+            name=name, source=source, run_id=run_id, tags=tags, **kwargs
+        )
         event = {
             'event': 'MODEL_VERSION_CREATED',
             'model_name': mv.name,
             'version': mv.version,
-            'source': mv.source
+            'source': mv.source,
+            'status': 'Successful'
         }
-        self.redis_client.publish('mlflow_events', json.dumps(event))
-        print("Published MODEL_VERSION_CREATED event:", event)
-        return mv
+    except Exception as e:
+        event = {
+            'event': 'MODEL_VERSION_FAILED',
+            'model_name': name,
+            'source': source,
+            'status': 'Unsuccessful',
+            'error': str(e)
+        }
+
+    # Publish to Redis in both success and failure cases
+    self.redis_client.publish('mlflow_events', json.dumps(event))
+    print("Published MODEL_VERSION event:", event)
+
+    return mv
     
 #ryank

@@ -1,25 +1,35 @@
 import mlflow
 from mlflow.tracking import MlflowClient
+from sklearn.linear_model import LinearRegression
+import os
 
-# Connect to your running MLflow server
+# Connect to MLflow server
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_experiment("RedisModelTest")
 
-# Create a test experiment and run
-mlflow.set_experiment("ModelVersionTest")
-
+# Start a run
 with mlflow.start_run() as run:
-    mlflow.log_param("lr", 0.01)
-    mlflow.log_metric("accuracy", 0.9)
-    mlflow.sklearn.log_model(sk_model=None, artifact_path="model")  # dummy model
+    mlflow.log_param("learning_rate", 0.01)
+    mlflow.log_metric("accuracy", 0.95)
+
+    # Create and log a dummy sklearn model
+    model = LinearRegression()
+    model_path = "model"
+    mlflow.sklearn.log_model(sk_model=model, artifact_path=model_path)
 
     run_id = run.info.run_id
+    print(f"Run created with ID: {run_id}")
 
-# Register the model
+# Register the model (this triggers create_model_version)
 client = MlflowClient()
 model_name = "RedisNotifyModel"
-model_source = f"runs:/{run_id}/model"
+source = f"runs:/{run_id}/{model_path}"
 
-# This triggers create_model_version in your NotifyingStore
-mv = client.create_model_version(name=model_name, source=model_source, run_id=run_id)
+print("Creating model version...")
+mv = client.create_model_version(
+    name=model_name,
+    source=source,
+    run_id=run_id
+)
 
-print(f"Created model version: {mv.name} (v{mv.version})")
+print(f"Model version created: {mv.name} (v{mv.version})")
