@@ -8,7 +8,7 @@ class NotifyingStore(SqlAlchemyStore):
             real_store_uri = store_uri.split("://", 1)[1]
         else:
             real_store_uri = store_uri
-        print("✅ Initializing NotifyingStore wrapper...")
+        print("Initializing NotifyingStore wrapper...")
         super().__init__(real_store_uri, artifact_uri)
 
         # Connect to Redis
