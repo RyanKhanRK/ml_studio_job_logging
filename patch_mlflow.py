@@ -1,6 +1,14 @@
-import mlflow.store.model_registry.sqlalchemy_store as registry_store
-import mlflow.store.tracking.sqlalchemy_store as tracking_store
-from mlflow_custom_ext.notifying_store import NotifyingRegistryStore, NotifyingTrackingStore
+from mlflow.tracking._model_registry.registry import ModelRegistryStoreRegistry
+from mlflow_custom_ext.notifying_registry_store import NotifyingRegistryStore
 
-registry_store.SqlAlchemyStore = NotifyingRegistryStore
-tracking_store.SqlAlchemyStore = NotifyingTrackingStore
+def patch_mlflow():
+    # Get the global instance used by MLflow
+    registry = ModelRegistryStoreRegistry()
+    
+    # Register your custom store scheme
+    registry.register(
+        "notifying-registry",
+        lambda store_uri: NotifyingRegistryStore(store_uri)
+    )
+
+    print("✅ Patched MLflow with notifying-registry store.")

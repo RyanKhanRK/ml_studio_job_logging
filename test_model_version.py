@@ -21,15 +21,17 @@ with mlflow.start_run() as run:
     print(f"Run created with ID: {run_id}")
 
 # Register the model (this triggers create_model_version)
-client = MlflowClient()
-model_name = "RedisNotifyModel"
-source = f"runs:/{run_id}/{model_path}"
+# client = MlflowClient()
+# model_name = "RedisNotifyModel"
+# source = f"runs:/{run_id}/{model_path}"
 
-print("Creating model version...")
-mv = client.create_model_version(
-    name=model_name,
-    source=source,
-    run_id=run_id
-)
+# print("Creating model version...")
+# mv = client.create_model_version(
+#     name=model_name,
+#     source=source,
+#     run_id=run_id
+# )
 
-print(f"Model version created: {mv.name} (v{mv.version})")
+# print(f"Model version created: {mv.name} (v{mv.version})")
+
+mlflow.register_model("run://3/5a6f7b10636f4173b74a25304621e7b8/artifacts", "test")
