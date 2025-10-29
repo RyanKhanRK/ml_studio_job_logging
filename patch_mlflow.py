@@ -1,17 +1,14 @@
-import mlflow.store.model_registry.sqlalchemy_store as registry_store
-from mlflow_custom_ext.notifying_store import NotifyingStore
+from mlflow.tracking._model_registry.registry import ModelRegistryStoreRegistry
+from mlflow_custom_ext.notifying_registry_store import NotifyingRegistryStore
 
-# Keep original init
-_original_init = registry_store.SqlAlchemyStore.__init__
+def patch_mlflow():
+    # Get the global instance used by MLflow
+    registry = ModelRegistryStoreRegistry()
+    
+    # Register your custom store scheme
+    registry.register(
+        "notifying-registry",
+        lambda store_uri: NotifyingRegistryStore(store_uri)
+    )
 
-def patched_init(self, uri, artifact_uri=None):
-    if uri.startswith("notifying-db://"):
-        real_uri = uri.split("://", 1)[1]
-    else:
-        real_uri = uri
-    _original_init(self, real_uri, artifact_uri)
-
-registry_store.SqlAlchemyStore.__init__ = patched_init
-registry_store.SqlAlchemyStore = NotifyingStore
-
-print("MLflow 2.17.2 patched: notifying-db:// works for tracking and model registry")
+    print("✅ Patched MLflow with notifying-registry store.")
