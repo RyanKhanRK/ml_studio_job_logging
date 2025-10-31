@@ -11,4 +11,4 @@ def patch_mlflow():
         lambda store_uri: NotifyingRegistryStore(store_uri)
     )
 
-    print("✅ Patched MLflow with notifying-registry store.")
+    print("Patched MLflow with notifying-registry store.")

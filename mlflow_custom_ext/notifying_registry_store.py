@@ -11,7 +11,7 @@ class NotifyingRegistryStore(SqlAlchemyStore):
             real_store_uri = store_uri
 
         print("Initializing NotifyingRegistryStore...")
-        super().__init__(real_store_uri)  # ✅ only one arg in 2.17.2
+        super().__init__(real_store_uri)  # only one arg in 2.17.2
 
         # Connect to Redis
         self.redis_client = redis.Redis(host="localhost", port=6379, db=0)
