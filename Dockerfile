@@ -1,11 +1,10 @@
 # 1. Use an official Python runtime as a parent image
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 # 2. Set the working directory in the container
 WORKDIR /app
 
 # 3. Copy and install requirements
-# (Assumes you've fixed requirements.txt as instructed above)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
