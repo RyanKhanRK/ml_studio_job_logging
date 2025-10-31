@@ -32,8 +32,8 @@ Before you start, make sure you have:
 ### 1️⃣ Clone this repository
 
 ```bash
-git clone https://github.com/<your-username>/mlflow-custom-ext.git
-cd mlflow-custom-ext
+git clone https://github.com/<your-username>/ml_studio_job_logging.git
+cd ml_studio_job_logging
 ````
 
 ### 2️⃣ Create and activate a virtual environment
