@@ -34,16 +34,8 @@ mlflow server \
 
 ### 4. Log and register models
 
-```python
-import mlflow
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
-mlflow.set_experiment("RedisDemo")
-
-with mlflow.start_run():
-    mlflow.log_param("lr", 0.01)
-    mlflow.log_metric("accuracy", 0.9)
-    mlflow.sklearn.log_model(sk_model=model, artifact_path="model")
-    mlflow.register_model(f"runs:/{mlflow.active_run().info.run_id}/model", "RedisModel")
+```bash
+python test.py or test_model_version.py
 ```
 
 ---
