@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # The Redis server
+  redis:
+    image: redis:7-alpine
+    container_name: mlflow_redis
+    ports:
+      - "6379:6379" # Optional: if you want to connect from your host machine
+
+  # Your custom MLflow server
+  mlflow:
+    build: .  # Build the Dockerfile in the current directory
+    container_name: mlflow_custom
+    ports:
+      - "5000:5000" # Map MLflow UI port
+    environment:
+      - REDIS_HOST=redis # This tells the app to connect to the 'redis' service
+    volumes:
+      - mlflow_data:/data # Persists the sqlite db
+      - ./mlartifacts:/app/mlartifacts # Persists the artifacts
+    depends_on:
+      - redis
+
+volumes:
+  mlflow_data:
+    driver: local
