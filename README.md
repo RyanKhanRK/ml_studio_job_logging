@@ -1,27 +1,91 @@
-# ML Studio Job Logging Extension
+# 🚀 MLflow Custom Extension (with Redis Notifications)
 
-A plugin extension for **ML Studio** that adds Redis-based event notifications when new runs or model versions are created.
+This project extends **MLflow (v2.17.2)** with **Redis-based notifications** — allowing real-time tracking of new model versions and run events.  
+It’s designed for integration into **Blendata Enterprise’s ML Studio**.
 
-## 🚀 Features
-- Custom MLflow Tracking Store (`notifying-tracking://`)
-- Custom MLflow Registry Store (`notifying-registry://`)
-- Publishes MLflow events (`RUN_CREATED`, `MODEL_VERSION_CREATED`) to a Redis channel
-- Easy integration into Blendata Enterprise’s ML Studio
+---
 
-## 🧠 Usage
+## ✨ Features
 
-### 1. Install
+- 🔌 Custom MLflow Tracking Store (`notifying-tracking://`)
+- 🧩 Custom MLflow Model Registry Store (`notifying-registry://`)
+- 📡 Publishes Redis events when:
+  - A **new run** is created
+  - A **new model version** is registered
+- ⚙️ Easy setup for both local development and integration inside ML Studio
+
+---
+
+## 🛠️ Prerequisites
+
+Before you start, make sure you have:
+
+- **Python 3.9+**
+- **pip** and **virtualenv**
+- **Redis** server (local or Docker)
+- **MLflow 2.17.2**
+
+---
+
+## ⚙️ Installation Steps
+
+### 1️⃣ Clone this repository
+
 ```bash
-pip install -e .
+git clone https://github.com/<your-username>/mlflow-custom-ext.git
+cd mlflow-custom-ext
 ````
 
-### 2. Start Redis
+### 2️⃣ Create and activate a virtual environment
 
 ```bash
-redis-server
+python3 -m venv venv
+source venv/bin/activate    # (Linux/Mac)
+venv\Scripts\activate       # (Windows)
 ```
 
-### 3. Start MLflow with custom URIs
+### 3️⃣ Install MLflow and Redis Python packages
+
+```bash
+pip install mlflow==2.17.2 redis==5.0.0 sqlalchemy
+```
+
+### 4️⃣ Install the custom plugin
+
+```bash
+pip install -e .
+```
+
+---
+
+## 🧱 Setting Up Redis
+
+### Option 1: Local installation (Linux/Mac)
+
+```bash
+sudo apt update
+sudo apt install redis-server
+sudo systemctl start redis-server
+```
+
+### Option 2: Docker
+
+```bash
+docker run -d --name redis -p 6379:6379 redis
+```
+
+### Verify Redis is running:
+
+```bash
+redis-cli ping
+# → PONG
+```
+
+---
+
+## 🚀 Running MLflow with Custom Stores
+
+Now that MLflow and Redis are ready, start the MLflow server with your custom URIs:
 
 ```bash
 mlflow server \
@@ -32,44 +96,42 @@ mlflow server \
     --port 5000
 ```
 
-### 4. Log and register models
+You should see logs like:
 
-```bash
-python test.py or test_model_version.py
+```
+Initializing NotifyingRegistryStore...
+Connected to Redis server on localhost:6379
+✅ MLflow patched successfully with notifying stores.
 ```
 
 ---
 
-## 📡 Redis Event Example
+## 📡 Example Redis Event
 
-When a new model version is created, a message like this will be published:
+When a new model version is created, Redis will publish an event like this:
 
 ```json
-Published RUN_CREATED event: {'event': 'RUN_CREATED', 'status': 'Successful', 'run_id': 'f8f65648f1994de4bb33fc89514266ff'}
+{
+  "event": "MODEL_VERSION_CREATED",
+  "model_name": "RedisModel",
+  "version": 1,
+  "source": "runs:/abc123/model",
+  "status": "Successful"
+}
+```
 
-Published MODEL_VERSION event: {'event': 'MODEL_VERSION_CREATED', 'model_name': 'RedisNotifyModel', 'version': 2, 'source': '/home/ryank/Downloads/mlflow_custom_ext/mlartifacts/3/4476e8503c46444fa4bcb4223f3e1043/artifacts/model', 'status': 'Successful'}
+You can listen to these events using:
+
+```bash
+redis-cli subscribe mlflow_events
 ```
 
 ---
 
-## ✅ To Test Locally
+## 💡 Notes
 
-```bash
-# Create venv
-python3 -m venv venv
-source venv/bin/activate
+* The **URI scheme prefixes** (`notifying-tracking://` and `notifying-registry://`) automatically wrap around standard MLflow stores (like SQLite, MySQL, or PostgreSQL).
+* The plugin emits events to the Redis channel `mlflow_events`.
+* Designed to work with **MLflow v2.17.2** and higher.
 
-# Install plugin
-pip install -e .
-
-# Run Redis
-redis-server
-
-# Start MLflow with your new URIs
-mlflow server \
-    --backend-store-uri "notifying-tracking://sqlite:///mlflow.db" \
-    --registry-store-uri "notifying-registry://sqlite:///mlflow.db" \
-    --default-artifact-root ./mlartifacts \
-    --host 127.0.0.1 \
-    --port 5000
-```
+---
