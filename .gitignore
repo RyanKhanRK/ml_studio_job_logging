@@ -3,4 +3,3 @@ mlflow_custom_ext/__pycache__
 mlflow_custom_ext.egg-info
 mlflow.db
 mlartifacts
-mlflow_custom_ext_env
