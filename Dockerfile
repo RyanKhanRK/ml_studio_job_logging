@@ -1,5 +1,6 @@
 # 1. Use an official Python runtime as a parent image
-FROM python:3.10-slim
+#    FIX: Use 3.11 (or newer) to satisfy contourpy==1.3.3 requirement
+FROM python:3.11-slim
 
 # 2. Set the working directory in the container
 WORKDIR /app
