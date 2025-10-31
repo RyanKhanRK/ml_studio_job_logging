@@ -30,7 +30,6 @@ Markdown==3.9
 MarkupSafe==3.0.3
 matplotlib==3.10.7
 mlflow==2.17.2
--e git+https://github.com/RyanKhanRK/mlflow_custom_ext.git@544db2fc6d49465b9c72f51a5f3a9f24551009f1#egg=mlflow_custom_ext
 mlflow-skinny==2.17.2
 numpy==2.3.3
 opentelemetry-api==1.37.0
