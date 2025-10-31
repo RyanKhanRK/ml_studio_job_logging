@@ -1,5 +1,6 @@
 import json
 import redis
+import os
 from mlflow.store.model_registry.sqlalchemy_store import SqlAlchemyStore
 
 
@@ -14,8 +15,9 @@ class NotifyingRegistryStore(SqlAlchemyStore):
         super().__init__(real_store_uri)  # only one arg in 2.17.2
 
         # Connect to Redis
-        self.redis_client = redis.Redis(host="localhost", port=6379, db=0)
-        print("Connected to Redis server on localhost:6379")
+        redis_host = os.getenv("REDIS_HOST", "localhost")
+        self.redis_client = redis.Redis(host=redis_host, port=6379, db=0)
+        print(f"Connected to Redis server on {redis_host}:6379")
 
     def create_model_version(self, name, source, run_id=None, tags=None, **kwargs):
         """Emit Redis event when model version is created."""

@@ -1,5 +1,6 @@
 import json
 import redis
+import os
 from mlflow.store.tracking.sqlalchemy_store import SqlAlchemyStore
 
 class NotifyingTrackingStore(SqlAlchemyStore):
@@ -11,8 +12,9 @@ class NotifyingTrackingStore(SqlAlchemyStore):
         print("Initializing NotifyingTrackingStore...")
         super().__init__(real_store_uri, artifact_uri)
 
-        self.redis_client = redis.Redis(host='localhost', port=6379, db=0)
-        print("Connected to Redis server on localhost:6379")
+        redis_host = os.getenv("REDIS_HOST", "localhost")
+        self.redis_client = redis.Redis(host=redis_host, port=6379, db=0)
+        print(f"Connected to Redis server on {redis_host}:6379")
 
     def create_run(self, experiment_id, user_id, start_time, tags, **kwargs):
         event = {"event": "RUN_CREATED"}
