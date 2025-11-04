@@ -6,10 +6,10 @@ setup(
     packages=find_packages(),
     entry_points={
         "mlflow.tracking_store": [
-            "notifying-tracking=mlflow_custom_ext.notifying_tracking_store:NotifyingTrackingStore"
+            "logging-tracking=mlflow_custom_ext.logging_tracking_store:LoggingTrackingStore"
         ],
         "mlflow.model_registry_store": [
-            "notifying-registry=mlflow_custom_ext.notifying_registry_store:NotifyingRegistryStore"
+            "logging-registry=mlflow_custom_ext.logging_registry_store:LoggingRegistryStore"
         ],
     },
 )

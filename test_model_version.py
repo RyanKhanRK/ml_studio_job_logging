@@ -16,20 +16,13 @@ model_name = "RedisNotifyModel"
 # --- Start and log your run ---
 with mlflow.start_run() as run:
     run_id = run.info.run_id
-    print(f"Run created with ID: {run_id}")
 
-    # Log params/metrics
-    mlflow.log_param("learning_rate", 0.01)
-    mlflow.log_metric("accuracy", 0.95)
+# Register the model
+client = MlflowClient()
+model_name = "RedisNotifyModel"
+model_source = f"runs:/{run_id}/model"
 
-    # Train and log dummy model
-    model = LinearRegression()
-    mlflow.sklearn.log_model(model, artifact_path="model")
-
-    # --- Automatically register it like UI ---
-    model_uri = f"runs:/{run_id}/model"
-    print(f"Auto-registering model from {model_uri}")
-
-    registered_model = mlflow.register_model(model_uri, model_name)
+# This triggers create_model_version in your LoggingStore
+mv = client.create_model_version(name=model_name, source=model_source, run_id=run_id)
 
 print(f"Model registered successfully: {registered_model.name} (v{registered_model.version})")
